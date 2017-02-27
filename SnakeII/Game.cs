@@ -28,6 +28,7 @@ namespace SnakeII
         Worm worm = null;
         Wall wall = null;
         Food food = null;
+        Thread t = null;
 
         public void Draw()
         {
@@ -66,19 +67,37 @@ namespace SnakeII
             return false;
         }
 
+        
+
         public void Start()
         {
             Load();
 
-            Thread t = new Thread(new ThreadStart(worm.Move));
+            t = new Thread(new ThreadStart(worm.Move));
+
             t.IsBackground = true;
             t.Start();
+
 
             while (true)
             {
                 ConsoleKeyInfo pressedKey = Console.ReadKey();
                 switch (pressedKey.Key)
                 {
+                    case ConsoleKey.F3:
+                        wall = wall.Load() as Wall;
+                        worm = worm.Load() as Worm;
+                        worm.LinkToGame(this);
+                        t.Abort();
+
+                        t = new Thread(new ThreadStart(worm.Move));
+                        t.IsBackground = true;
+                        t.Start();
+
+                        break;
+                    case ConsoleKey.F2:
+                        this.Save();
+                        break;
                     case ConsoleKey.UpArrow:
                         worm.dx = 0;
                         worm.dy =-1;

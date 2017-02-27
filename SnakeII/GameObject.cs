@@ -31,11 +31,25 @@ namespace SnakeII
             }
         }
 
+        public GameObject Load()
+        {
+            GameObject result = null;
+
+            string fname = this.GetType().Name;
+            XmlSerializer xs = new XmlSerializer(this.GetType());
+            using (FileStream fs = new FileStream(string.Format("{0}.xml", fname), FileMode.Open, FileAccess.Read))
+            {
+                 result = xs.Deserialize(fs) as GameObject;
+            }
+
+            return result;
+        }
+
         public void Save()
         {
             string fname = this.GetType().Name;
             XmlSerializer xs = new XmlSerializer(this.GetType());
-            using (FileStream fs = new FileStream(string.Format("{0}.xml",fname), FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (FileStream fs = new FileStream(string.Format("{0}.xml",fname), FileMode.Truncate, FileAccess.Write))
             {
                 xs.Serialize(fs, this);
             }
